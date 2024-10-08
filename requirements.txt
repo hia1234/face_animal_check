@@ -1,0 +1,10 @@
+Flask
+numpy
+tensorflow
+werkzeug
+Pillow
+keras
+opencv-python
+scikit-learn
+
+# pip install -r requirements.txt

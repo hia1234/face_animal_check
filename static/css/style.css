@@ -1,0 +1,154 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #faf1f2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+header {
+    background-color: #f5cac2;
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+    color: #333;
+    font-size: 1.5rem;
+}
+.content {
+    max-width: 800px;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+h1, h2 {
+    text-align: center;
+}
+.skill {
+    margin-bottom: 20px;
+}
+.skill-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.progress-container {
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    height: 25px;
+    position: relative;
+}
+.progress-bar {
+    background-color: #3498db;
+    height: 100%;
+    border-radius: 5px;
+    width: 0;
+    transition: width 1.5s ease-out;
+}
+.progress-text {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: black;
+    font-weight: bold;
+}
+.image-container {
+    max-width: 90%;
+    max-height: 70vh;
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border: 2px solid #000;
+    border-radius: 10px;
+}
+.image-container img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #7d5959;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+button:hover {
+    background-color: #c1a3a3;
+}
+
+
+.result-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+.emoji {
+    font-size: 2rem;
+}
+
+
+/* 애니메이션 */
+.pyro {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1000;
+    pointer-events: none;
+}
+.pyro > .before, .pyro > .after {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    box-shadow: 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff;
+    animation: 1s bang ease-out infinite backwards, 1s gravity ease-in infinite backwards, 5s position linear infinite backwards;
+}
+.pyro > .after {
+    animation-delay: 1.25s, 1.25s, 1.25s;
+    animation-duration: 1.25s, 1.25s, 6.25s;
+}
+@keyframes bang {
+    to {
+        box-shadow: -70px -115.67px #00ff73, -28px -99.67px #ff00c4, 58px -31.67px #ff009d, 13px -7.67px #ff00d5, -69px -89.67px #00ff73, -36px -127.67px #00ff48, -7px -13.67px #0400ff, 34px -185.67px #ff006a, 10px -15.67px #ff3300, 34px -4.67px #00ff66, 128px -124.67px #a200ff, 48px 10.33px #0d00ff, -43px -77.67px #005eff, 89px -30.67px #ff5e00, -17px 0.33px #00ffbb, -94px -77.67px #ff1e00, -56px -66.67px #ff00d5, -147px -53.67px #6600ff, 24px -176.67px #e600ff, 124px -149.67px #9900ff, -144px -113.67px #1e00ff, -84px 8.33px #ff002f, 125px -72.67px #ff0037, -65px -203.67px #ff4800, -65px 20.33px #0066ff, 7px -42.67px #0059ff;
+    }
+}
+@keyframes gravity {
+    to {
+        transform: translateY(200px);
+        opacity: 0;
+    }
+}
+@keyframes position {
+    0%, 19.9% {
+        margin-top: 10%;
+        margin-left: 40%;
+    }
+    20%, 39.9% {
+        margin-top: 40%;
+        margin-left: 30%;
+    }
+    40%, 59.9% {
+        margin-top: 20%;
+        margin-left: 70%;
+    }
+    60%, 79.9% {
+        margin-top: 30%;
+        margin-left: 20%;
+    }
+    80%, 99.9% {
+        margin-top: 30%;
+        margin-left: 80%;
+    }
+}

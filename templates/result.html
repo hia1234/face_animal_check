@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예측 결과</title>
+    <link rel="stylesheet" href="/static/css/style.css" type="text/css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+</head>
+<body>
+<!-- 애니메이션 -->
+    <div class="pyro">
+        <div class="before"></div>
+        <div class="after"></div>
+    </div>
+    <header>
+        <h2>유노 놀이터 - 동물형 검사기</h2>
+    </header>
+    <div class="content" id="capture-area">
+        <h1>예측 결과</h1>
+
+        <div class="image-container">
+            <img src="{{ url_for('uploaded_file', filename=image_file) }}" alt="Uploaded Image">
+        </div>
+
+        <h2 class="result-text">
+            가장 유사한 동물상: {{ predicted_class }}
+            <span class="emoji">
+                {% if predicted_class == "고양이상" %}
+                    😺
+                {% elif predicted_class == "강아지상" %}
+                    🐶
+                {% elif predicted_class == "여우상" %}
+                    🦊
+                {% elif predicted_class == "토끼상" %}
+                    🐰
+                {% endif %}
+            </span>
+        </h2>
+        
+        {% for i in range(class_names|length) %}
+            <div class="skill">
+                <div class="skill-name">{{ class_names[i] }}</div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-{{ i }}"></div>
+                    <div class="progress-text">{{ (confidence[i] * 100)|round(2) }}%</div>
+                </div>
+            </div>
+        {% endfor %}
+
+        <button onclick="window.location.href='/'">다른 사진 해보기</button>
+        <button onclick="shareWithFriend()">친구한테 공유하기</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                {% for i in range(class_names|length) %}
+                    var bar{{ i }} = document.getElementById('progress-{{ i }}');
+                    bar{{ i }}.style.width = '{{ (confidence[i] * 100)|round(2) }}%';
+                {% endfor %}
+            }, 100);
+        });
+
+
+        window.addEventListener('load', function() {
+            var pyro = document.querySelector('.pyro');
+            pyro.style.display = 'block';
+            setTimeout(function() {
+                pyro.style.display = 'none';
+            }, 5000);  // 5초 후 애니메이션 숨김
+        });
+
+        function shareWithFriend() {
+    html2canvas(document.querySelector("#capture-area")).then(canvas => {
+        // 이미지를 Blob 형태로 변환
+        canvas.toBlob(function(blob) {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = '예측결과.png';  // 다운로드할 파일 이름
+            link.click();  // 다운로드 실행
+        });
+    });
+}
+    </script>
+</body>
+</html>

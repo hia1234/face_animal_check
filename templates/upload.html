@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>동물상 검사기</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #faf1f2;
+        }
+        header {
+            background-color: #f5cac2;
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            color: #333;
+            font-size: 1.5rem;
+        }
+        .upload-container {
+            background: white;
+            border: 2px solid #000;
+            border-radius: 10px;
+            width: 300px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 50px;   
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            overflow: hidden;
+        }
+        .upload-container:hover {
+            background-color: #f0f0f0;
+        }
+        .upload-container input[type="file"] {
+            display: none;
+        }
+        .upload-container label {
+            text-align: center;
+            color: #666;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        #preview-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: none;
+        }
+        #upload-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        #upload-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #7d5959;
+            color: white;
+            cursor: pointer;
+            display: none;
+        }
+        #upload-text {
+            margin-top: 20px;
+            text-align: center;
+            color: #333;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        #upload-text:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>유노 놀이터 - 동물형 검사기</h2>
+    </header>
+    <form action="/predict" method="post" enctype="multipart/form-data" id="upload-form">
+        <div class="upload-container" id="upload-container">
+            <input type="file" name="file" id="file" accept="image/*" required>
+            <label for="file" id="upload-label">여기를 눌러 사진을 업로드 하세요</label>
+            <img id="preview-image" src="#" alt="미리보기">
+        </div>
+        <button type="submit" id="upload-button">업로드</button>
+    </form>
+    <div id="upload-text">
+        사진을 업로드해 닮은 동물상을 확인해보세요!!
+    </div>
+            <button id="webcam-btn">웹캠 사용하기</button>
+        </div>
+
+        <!-- 웹캠 관련 UI -->
+        <div id="webcam-container" style="display: none;">
+            <video id="webcam" width="300" height="225" autoplay></video>
+            <button id="capture-btn">사진 찍기</button>
+            <canvas id="canvas" style="display: none;"></canvas>
+            <form id="webcam-form" action="{{ url_for('predict') }}" method="POST" enctype="multipart/form-data">
+                <input type="hidden" id="webcam-image" name="webcam_image">
+            </form>
+        </div>
+    </main>
+
+    <script>
+        
+        const uploadContainer = document.getElementById('upload-container');
+        const fileInput = document.getElementById('file');
+        const previewImage = document.getElementById('preview-image');
+        const uploadLabel = document.getElementById('upload-label');
+        const uploadButton = document.getElementById('upload-button');
+
+        const webcamBtn = document.getElementById('webcam-btn');
+        const webcamContainer = document.getElementById('webcam-container');
+        const video = document.getElementById('webcam');
+        const canvas = document.getElementById('canvas');
+        const captureBtn = document.getElementById('capture-btn');
+        const webcamForm = document.getElementById('webcam-form');
+        const webcamImageInput = document.getElementById('webcam-image');
+
+        let webcamStream;
+
+        // 웹캠 활성화 버튼 클릭 시
+        webcamBtn.addEventListener('click', async () => {
+            webcamContainer.style.display = 'block';
+            webcamBtn.style.display = 'none';
+
+            try {
+                // 웹캠 스트림 가져오기
+                webcamStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = webcamStream;
+            } catch (error) {
+                console.error('웹캠을 사용할 수 없습니다:', error);
+            }
+        });
+
+        // 사진 찍기 버튼 클릭 시
+        captureBtn.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            // 캔버스에 현재 프레임 그리기
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // 캔버스 데이터를 이미지로 변환
+            const dataURL = canvas.toDataURL('image/png');
+            webcamImageInput.value = dataURL;
+
+            // 웹캠 폼 제출
+            webcamForm.submit();
+        });
+
+
+
+        
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = 'block';
+                    uploadLabel.style.display = 'none';
+                    uploadButton.style.display = 'block';
+                    
+                    // 이미지 크기에 따라 컨테이너 크기 조정
+                    const img = new Image();
+                    img.onload = function() {
+                        let width = this.width;
+                        let height = this.height;
+                        const maxWidth = 600;
+                        const maxHeight = 400;
+
+                        if (width > maxWidth) {
+                            height *= maxWidth / width;
+                            width = maxWidth;
+                        }
+                        if (height > maxHeight) {
+                            width *= maxHeight / height;
+                            height = maxHeight;
+                        }
+
+                        uploadContainer.style.width = `${width}px`;
+                        uploadContainer.style.height = `${height}px`;
+                    }
+                    img.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>
